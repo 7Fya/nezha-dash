@@ -7,6 +7,10 @@ import { Separator } from "../../../components/ui/separator";
 import { DateTime } from "luxon";
 import { ModeToggle } from "../../../components/ThemeSwitcher";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import useSWR from "swr";
+import { nezhaFetcher } from "@/lib/utils";
+import { Loader } from "@/components/loading/Loader";
+
 function Header() {
   const t = useTranslations("Header");
   return (
@@ -58,6 +62,7 @@ const useInterval = (callback: Function, delay?: number | null) => {
 };
 function Overview() {
   const t = useTranslations("Overview");
+  const { isValidating } = useSWR("/api/server", nezhaFetcher);
   const [mouted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -72,7 +77,13 @@ function Overview() {
   }, 1000);
   return (
     <section className={"mt-10 flex flex-col md:mt-16"}>
-      <p className="text-base font-semibold">{t("p_2277-2331_Overview")}</p>
+      <section className="flex items-center">
+        <p className="text-base font-semibold">{t("p_2277-2331_Overview")}</p>
+        <div className="flex h-7 items-center">
+          {isValidating && <Loader visible={true} />}
+        </div>
+      </section>
+
       <div className="flex items-center gap-1.5">
         <p className="text-sm font-medium opacity-50">
           {t("p_2390-2457_wherethetimeis")}
